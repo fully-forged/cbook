@@ -27,6 +27,7 @@
    [:div#collapsing-navbar.collapse.navbar-collapse
     [:ul.nav.navbar-nav.mr-auto
      [nav-link "#/" "Home" :home]
+     [nav-link "#/help" "Help" :help]
      [nav-link "#/about" "About" :about]]]])
 
 (defn about-page []
@@ -36,6 +37,10 @@
      [:img {:src (str js/context "/img/warning_clojure.png")}]]]])
 
 (defn home-page []
+  [:div.continer
+   [:h1 "Home"]])
+
+(defn help-page []
   [:div.container
    [:div.row>div.col-sm-12
     [:h2.alert.alert-info "Tip: try pressing CTRL+H to open re-frame tracing menu"]]
@@ -46,6 +51,7 @@
 
 (def pages
   {:home #'home-page
+   :help #'help-page
    :about #'about-page})
 
 (defn page []
@@ -59,6 +65,9 @@
 
 (secretary/defroute "/" []
   (rf/dispatch [:set-active-page :home]))
+
+(secretary/defroute "/help" []
+  (rf/dispatch [:set-active-page :help]))
 
 (secretary/defroute "/about" []
   (rf/dispatch [:set-active-page :about]))

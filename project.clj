@@ -15,18 +15,18 @@
                  [luminus-nrepl "0.1.4"]
                  [luminus/ring-ttl-session "0.3.2"]
                  [markdown-clj "1.0.2"]
-                 [metosin/compojure-api "1.1.11"]
+                 [metosin/compojure-api "1.1.12"]
                  [metosin/muuntaja "0.5.0"]
                  [metosin/ring-http-response "0.9.0"]
                  [mount "0.1.12"]
                  [org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.9.946" :scope "provided"]
+                 [org.clojure/clojurescript "1.10.217" :scope "provided"]
                  [org.clojure/tools.cli "0.3.5"]
                  [org.clojure/tools.logging "0.4.0"]
                  [org.clojure/tools.reader "1.2.2"]
-                 [org.postgresql/postgresql "42.2.1"]
+                 [org.postgresql/postgresql "42.2.2"]
                  [org.webjars.bower/tether "1.4.3"]
-                 [org.webjars/bootstrap "4.0.0"]
+                 [org.webjars/bootstrap "4.0.0-2"]
                  [org.webjars/font-awesome "5.0.6"]
                  [re-frame "0.10.5"]
                  [reagent "0.7.0"]
@@ -86,8 +86,8 @@
    :project/dev  {:jvm-opts ["-server" "-Dconf=dev-config.edn"]
                   :dependencies [[binaryage/devtools "0.9.9"]
                                  [com.cemerick/piggieback "0.2.2"]
-                                 [day8.re-frame/re-frame-10x "0.2.0"]
-                                 [doo "0.1.8"]
+                                 [day8.re-frame/re-frame-10x "0.3.0"]
+                                 [doo "0.1.10"]
                                  [figwheel-sidecar "0.5.15"]
                                  [pjstadig/humane-test-output "0.8.3"]
                                  [prone "1.5.0"]
@@ -96,7 +96,7 @@
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.19.0"]
                                  [lein-doo "0.1.8"]
                                  [lein-figwheel "0.5.15"]
-                                 [org.clojure/clojurescript "1.9.946"]]
+                                 [org.clojure/clojurescript "1.10.217"]]
                   :cljsbuild
                   {:builds
                    {:app
@@ -131,8 +131,8 @@
                      {:output-to "target/test.js"
                       :main "cbook.doo-runner"
                       :optimizations :whitespace
-                      :pretty-print true}}}}
+                      :pretty-print true}}}}}
                   
-                  }
+                  
    :profiles/dev {}
    :profiles/test {}})

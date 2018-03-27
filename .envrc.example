@@ -1,0 +1,1 @@
+export DATABASE_URL="jdbc:postgresql://localhost/cbook_dev?user=claudioortolina"

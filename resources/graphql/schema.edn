@@ -1,25 +1,13 @@
-{:enums
- {:episode
-  {:description "The episodes of the original Star Wars trilogy."
-   :values [:NEWHOPE :EMPIRE :JEDI]}}
-
- :objects
- {:droid
-  {:fields {:primary_functions {:type (list String)}
-            :id {:type Int}
+{:objects
+ {:ingredient
+  {:fields {:id {:type ID}
             :name {:type String}
-            :appears_in {:type (list :episode)}}}
-
-  :human
-  {:fields {:id {:type Int}
-            :name {:type String}
-            :home_planet {:type String}
-            :appears_in {:type (list :episode)}}}}
-
+            :created_at {:type String}
+            :updated_at {:type String}}}}
  :queries
- {:hero {:type (non-null :human)
-         :args {:id {:type String :default-value "2001"}}
-         :resolve :get-hero}
-  :droid {:type :droid
-          :args {:name {:type String}}
-          :resolve :get-droid}}}
+ {:ingredient {:type (non-null :ingredient)
+               :args {:id {:type String}}
+               :resolve :get-ingredient}
+  :ingredients {:type (list :ingredient)
+                :args {}
+                :resolve :get-ingredients}}}

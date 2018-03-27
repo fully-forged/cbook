@@ -5,38 +5,28 @@
             [clojure.data.json :as json]
             [clojure.edn :as edn]
             [ring.util.http-response :refer :all]
-            [compojure.api.sweet :refer :all]))
+            [compojure.api.sweet :refer :all]
+            [cbook.db.core :as db]))
 
+(defn get-ingredient [context args value]
+  (db/get-ingredient (select-keys args [:id])))
 
-
-(defn get-hero [context args value]
-  (let [data  [{:id 1000
-               :name "Luke"
-               :home_planet "Tatooine"
-               :appears_in ["NEWHOPE" "EMPIRE" "JEDI"]}
-              {:id 2000
-               :name "Lando Calrissian"
-               :home_planet "Socorro"
-               :appears_in ["EMPIRE" "JEDI"]}]]
-           (first data)))
+(defn get-ingredients [context args value]
+  (db/get-ingredients))
 
 (def compiled-schema
   (-> "resources/graphql/schema.edn"
       slurp
       edn/read-string
-      (attach-resolvers {:get-hero get-hero
-                         :get-droid (constantly {})})
+      (attach-resolvers {:get-ingredient get-ingredient
+                         :get-ingredients get-ingredients})
       schema/compile))
-
-(defn format-params [query]
-   (let [parsed (json/read-str query)] ;;-> placeholder - need to ensure query meets graphql syntax
-     (str "query { hero(id: \"1000\") { name appears_in }}")))
 
 (defn execute-request [query]
     (let [vars nil
-          context nil]
+          context nil])
     (-> (lacinia/execute compiled-schema query vars context)
-        (json/write-str))))
+        (json/write-str)))
 
 (defapi service-routes
   (POST "/api" [:as {body :body}]

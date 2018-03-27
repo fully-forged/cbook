@@ -12,25 +12,13 @@
     (mount/start
       #'cbook.config/env
       #'cbook.db.core/*db*)
-    (migrations/migrate ["migrate"] (select-keys env [:database-url]))
+    (migrations/migrate ["reset"] (select-keys env [:database-url]))
     (f)))
 
 (deftest test-users
   (jdbc/with-db-transaction [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
-    (is (= 1 (db/create-user!
-               t-conn
-               {:id         "1"
-                :first_name "Sam"
-                :last_name  "Smith"
-                :email      "sam.smith@example.com"
-                :pass       "pass"})))
-    (is (= {:id         "1"
-            :first_name "Sam"
-            :last_name  "Smith"
-            :email      "sam.smith@example.com"
-            :pass       "pass"
-            :admin      nil
-            :last_login nil
-            :is_active  nil}
-           (db/get-user t-conn {:id "1"})))))
+    (let [inserted (db/create-ingredient! {:name "Cinnamon"})
+          cinnamon (db/get-ingredient inserted)]
+      (is (= "Cinnamon" (:name cinnamon)))
+      (is (= [cinnamon] (db/get-ingredients))))))

@@ -1,8 +1,9 @@
--- :name create-ingredient! :! :n
+-- :name create-ingredient! :<! :1
 -- :doc creates a new ingredient record
 INSERT INTO ingredients
 (name, created_at, updated_at)
 VALUES (:name, now(), now())
+RETURNING id
 
 -- :name get-ingredient :? :1
 -- :doc retrieves an ingredient by its id

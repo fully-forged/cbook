@@ -14,19 +14,21 @@
 (defn get-ingredients [context args value]
   (db/get-ingredients))
 
+(defn create-ingredient! [context args value]
+  (db/create-ingredient! (select-keys args [:name])))
+
 (def compiled-schema
   (-> "resources/graphql/schema.edn"
       slurp
       edn/read-string
       (attach-resolvers {:get-ingredient get-ingredient
-                         :get-ingredients get-ingredients})
+                         :get-ingredients get-ingredients
+                         :create-ingredient! create-ingredient!})
       schema/compile))
 
 (defn execute-request [query]
-    (let [vars nil
-          context nil])
-    (-> (lacinia/execute compiled-schema query vars context)
-        (json/write-str)))
+  (-> (lacinia/execute compiled-schema query nil nil)
+      (json/write-str)))
 
 (defapi service-routes
   (POST "/api" [:as {body :body}]

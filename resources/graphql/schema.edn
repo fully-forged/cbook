@@ -1,13 +1,16 @@
-{:objects
- {:ingredient
-  {:fields {:id {:type ID}
-            :name {:type String}
-            :created_at {:type String}
-            :updated_at {:type String}}}}
- :queries
- {:ingredient {:type (non-null :ingredient)
-               :args {:id {:type String}}
-               :resolve :get-ingredient}
-  :ingredients {:type (list :ingredient)
-                :args {}
-                :resolve :get-ingredients}}}
+{:objects {:Ingredient {:fields {:id {:type ID}}
+                        :name {:type String}
+                        :created_at {:type String}
+                        :updated_at {:type String}}}
+ :queries {:GetIngredient {:type :Ingredient
+                           :description "Gets an ingredient by ID"
+                           :args {:id {:type String}}
+                           :resolve :get-ingredient}
+           :GetIngredients {:type (list :Ingredient)
+                            :description "Gets all ingredients"
+                            :args {}
+                            :resolve :get-ingredients}}
+ :mutations {:CreateIngredient {:type :Ingredient
+                                :description "Creates a new ingredient"
+                                :args {:name {:type (non-null String)}}
+                                :resolve :create-ingredient!}}}

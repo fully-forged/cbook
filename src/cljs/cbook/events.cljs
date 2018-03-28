@@ -18,8 +18,8 @@
     (assoc db :docs docs)))
 
 (reg-event-db
-  :graphql-test
+  :got-ingredients
   (fn [db [_ {:keys [data errors] :as payload}]]
-    (println data)
-    (println errors)
-    db))
+    (if data
+      (assoc db :ingredients (:ingredients data))
+      db)))

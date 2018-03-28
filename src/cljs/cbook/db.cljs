@@ -1,4 +1,5 @@
 (ns cbook.db)
 
 (def default-db
-  {:page :home})
+  {:page :home
+   :ingredients []})

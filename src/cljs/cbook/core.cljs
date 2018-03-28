@@ -25,7 +25,7 @@
    :http-url "/api"})
 
 (def test-query
-  (v/graphql-query {:venia/queries [[:GetIngredients [:id]]]}))
+  (v/graphql-query {:venia/queries [[:ingredients [:id :name]]]}))
 
 (defn init! []
   (rf/dispatch-sync [:initialize-db])
@@ -33,7 +33,7 @@
   (rf/dispatch [::re-graph/query
                 test-query
                 {}
-                [:graphql-test]])
+                [:got-ingredients]])
   (load-interceptors!)
   (hook-browser-navigation!)
   (mount-components))

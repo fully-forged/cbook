@@ -9,17 +9,6 @@
             [cbook.config :refer [env]]
             [mount.core :as mount]))
 
-(use-fixtures
-  :each
-  (fn [test-case]
-    (mount/start
-      #'cbook.config/env
-      #'cbook.db.core/*db*)
-    (migrations/migrate ["reset"] (select-keys env [:database-url]))
-    (jdbc/with-db-transaction [t-conn *db*]
-      (jdbc/db-set-rollback-only! t-conn)
-      (test-case))))
-
 (def get-ingredients-payload
   "{ GetIngredients {
       id
@@ -42,3 +31,17 @@
     (let [response (app (request :post "/api" get-ingredients-payload))]
       (is (= ["data"] (keys (get-json-body response))))
       (is (= 200 (:status response))))))
+
+(defn migrate [test-case]
+  (mount/start
+    #'cbook.config/env
+    #'cbook.db.core/*db*)
+  (migrations/migrate ["reset"] (select-keys env [:database-url])))
+
+(defn clear [test-case]
+  (jdbc/with-db-transaction [t-conn *db*]
+    (jdbc/db-set-rollback-only! t-conn)
+    (test-case)))
+
+(use-fixtures :once migrate)
+(use-fixtures :each clear)

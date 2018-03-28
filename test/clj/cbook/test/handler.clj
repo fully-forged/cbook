@@ -10,10 +10,7 @@
             [mount.core :as mount]))
 
 (def get-ingredients-payload
-  "{ GetIngredients {
-      id
-     }
-   }")
+  "{\"query\":\"query { GetIngredients {\n      id\n     }\n   }\",\"variables\":{}}")
 
 (defn get-json-body [response]
   (parse-string (:body response)))

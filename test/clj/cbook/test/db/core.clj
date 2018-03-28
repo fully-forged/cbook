@@ -12,16 +12,13 @@
     (is (= "Cinnamon" (:name cinnamon)))
     (is (= [cinnamon] (db/get-ingredients)))))
 
-(defn migrate [test-case]
+(defn reset-db! [test-case]
   (mount/start
     #'cbook.config/env
     #'cbook.db.core/*db*)
-  (migrations/migrate ["reset"] (select-keys env [:database-url])))
-
-(defn clear [test-case]
   (jdbc/with-db-transaction [t-conn *db*]
+    (migrations/migrate ["reset"] (select-keys env [:database-url]))
     (jdbc/db-set-rollback-only! t-conn)
     (test-case)))
 
-(use-fixtures :once migrate)
-(use-fixtures :each clear)
+(use-fixtures :each reset-db!)

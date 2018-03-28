@@ -1,13 +1,16 @@
 (ns cbook.core
   (:require [reagent.core :as r]
             [re-frame.core :as rf]
+            [re-graph.core :as re-graph]
+            [venia.core :as v]
             [secretary.core :as secretary]
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
             [ajax.core :refer [GET POST]]
             [cbook.ajax :refer [load-interceptors!]]
-            [cbook.events])
+            [cbook.events]
+            [cbook.subs])
   (:import goog.History))
 
 (defn nav-link [uri title page]
@@ -92,8 +95,20 @@
   (rf/clear-subscription-cache!)
   (r/render [#'page] (.getElementById js/document "app")))
 
+(def re-graph-options
+  {:ws-url nil
+   :http-url "/api"})
+
+(def test-query
+  (v/graphql-query {:venia/queries [[:GetIngredients [:id]]]}))
+
 (defn init! []
   (rf/dispatch-sync [:initialize-db])
+  (rf/dispatch-sync [::re-graph/init re-graph-options])
+  (rf/dispatch-sync [::re-graph/query
+                     test-query
+                     {}   ;; arguments map
+                     [:graphql-test]])       ;; callback event when response is recieved
   (load-interceptors!)
   (fetch-docs!)
   (hook-browser-navigation!)

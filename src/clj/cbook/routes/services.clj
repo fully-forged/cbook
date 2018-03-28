@@ -26,12 +26,14 @@
                          :create-ingredient! create-ingredient!})
       schema/compile))
 
-(defn execute-request [body]
+(defn handler [body]
   (let [json-body (json/read-str body)
         query (get json-body "query")]
-    (-> (lacinia/execute compiled-schema query nil nil)
-        (json/write-str))))
+    {:status 200
+     :headers {"Content-Type" "application/json"}
+     :body (let [result (lacinia/execute compiled-schema query nil nil)]
+             (json/write-str result))}))
 
 (defapi service-routes
   (POST "/api" [:as {body :body}]
-    (ok (execute-request (slurp body)))))
+    (handler (slurp body))))

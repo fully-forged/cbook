@@ -1,8 +1,6 @@
 (ns cbook.events
   (:require [cbook.db :as db]
-            [re-frame.core :refer [dispatch reg-event-db reg-sub]]))
-
-;;dispatchers
+            [re-frame.core :refer [dispatch reg-event-db]]))
 
 (reg-event-db
   :initialize-db
@@ -19,14 +17,9 @@
   (fn [db [_ docs]]
     (assoc db :docs docs)))
 
-;;subscriptions
-
-(reg-sub
-  :page
-  (fn [db _]
-    (:page db)))
-
-(reg-sub
-  :docs
-  (fn [db _]
-    (:docs db)))
+(reg-event-db
+  :graphql-test
+  (fn [db [_ {:keys [data errors] :as payload}]]
+    (println data)
+    (println errors)
+    db))

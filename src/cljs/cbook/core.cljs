@@ -8,37 +8,8 @@
             [cbook.history :refer [hook-browser-navigation!]]
             [cbook.ajax :refer [load-interceptors!]]
             [cbook.events]
-            [cbook.subs]))
-
-(defn nav-link [uri title page]
-  [:li.nav-item
-   {:class (when (= page @(rf/subscribe [:page])) "active")}
-   [:a.nav-link {:href uri} title]])
-
-(defn navbar []
-  [:nav.navbar.navbar-dark.bg-primary.navbar-expand-md
-   {:role "navigation"}
-   [:button.navbar-toggler.hidden-sm-up
-    {:type "button"
-     :data-toggle "collapse"
-     :data-target "#collapsing-navbar"}
-    [:span.navbar-toggler-icon]]
-   [:a.navbar-brand {:href "#/"} "cbook"]
-   [:div#collapsing-navbar.collapse.navbar-collapse
-    [:ul.nav.navbar-nav.mr-auto
-     [nav-link "#/" "Home" :home]]]])
-
-(defn home-page []
-  [:div.container
-   [:h1 "Home"]])
-
-(def pages
-  {:home #'home-page})
-
-(defn page []
-  [:div
-   [navbar]
-   [(pages @(rf/subscribe [:page]))]])
+            [cbook.subs]
+            [cbook.views]))
 
 (secretary/set-config! :prefix "#")
 
@@ -47,7 +18,7 @@
 
 (defn mount-components []
   (rf/clear-subscription-cache!)
-  (r/render [#'page] (.getElementById js/document "app")))
+  (r/render [#'cbook.views/page] (.getElementById js/document "app")))
 
 (def re-graph-options
   {:ws-url nil

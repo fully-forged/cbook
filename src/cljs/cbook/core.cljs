@@ -4,14 +4,11 @@
             [re-graph.core :as re-graph]
             [venia.core :as v]
             [secretary.core :as secretary]
-            [goog.events :as events]
-            [goog.history.EventType :as HistoryEventType]
-            [markdown.core :refer [md->html]]
             [ajax.core :refer [GET POST]]
+            [cbook.history :refer [hook-browser-navigation!]]
             [cbook.ajax :refer [load-interceptors!]]
             [cbook.events]
-            [cbook.subs])
-  (:import goog.History))
+            [cbook.subs]))
 
 (defn nav-link [uri title page]
   [:li.nav-item
@@ -29,67 +26,24 @@
    [:a.navbar-brand {:href "#/"} "cbook"]
    [:div#collapsing-navbar.collapse.navbar-collapse
     [:ul.nav.navbar-nav.mr-auto
-     [nav-link "#/" "Home" :home]
-     [nav-link "#/help" "Help" :help]
-     [nav-link "#/about" "About" :about]]]])
-
-(defn about-page []
-  [:div.container
-   [:div.row
-    [:div.col-md-12
-     [:img {:src (str js/context "/img/warning_clojure.png")}]]]])
+     [nav-link "#/" "Home" :home]]]])
 
 (defn home-page []
-  [:div.continer
+  [:div.container
    [:h1 "Home"]])
 
-(defn help-page []
-  [:div.container
-   [:div.row>div.col-sm-12
-    [:h2.alert.alert-info "Tip: try pressing CTRL+H to open re-frame tracing menu"]]
-   (when-let [docs @(rf/subscribe [:docs])]
-     [:div.row>div.col-sm-12
-      [:div {:dangerouslySetInnerHTML
-             {:__html (md->html docs)}}]])])
-
 (def pages
-  {:home #'home-page
-   :help #'help-page
-   :about #'about-page})
+  {:home #'home-page})
 
 (defn page []
   [:div
    [navbar]
    [(pages @(rf/subscribe [:page]))]])
 
-;; -------------------------
-;; Routes
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
   (rf/dispatch [:set-active-page :home]))
-
-(secretary/defroute "/help" []
-  (rf/dispatch [:set-active-page :help]))
-
-(secretary/defroute "/about" []
-  (rf/dispatch [:set-active-page :about]))
-
-;; -------------------------
-;; History
-;; must be called after routes have been defined
-(defn hook-browser-navigation! []
-  (doto (History.)
-    (events/listen
-      HistoryEventType/NAVIGATE
-      (fn [event]
-        (secretary/dispatch! (.-token event))))
-    (.setEnabled true)))
-
-;; -------------------------
-;; Initialize app
-(defn fetch-docs! []
-  (GET "/docs" {:handler #(rf/dispatch [:set-docs %])}))
 
 (defn mount-components []
   (rf/clear-subscription-cache!)
@@ -104,12 +58,11 @@
 
 (defn init! []
   (rf/dispatch-sync [:initialize-db])
-  (rf/dispatch-sync [::re-graph/init re-graph-options])
-  (rf/dispatch-sync [::re-graph/query
-                     test-query
-                     {}   ;; arguments map
-                     [:graphql-test]])       ;; callback event when response is recieved
+  (rf/dispatch [::re-graph/init re-graph-options])
+  (rf/dispatch [::re-graph/query
+                test-query
+                {}
+                [:graphql-test]])
   (load-interceptors!)
-  (fetch-docs!)
   (hook-browser-navigation!)
   (mount-components))

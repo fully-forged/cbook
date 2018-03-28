@@ -10,7 +10,8 @@
             [mount.core :as mount]))
 
 (def get-ingredients-payload
-  "{\"query\":\"query { GetIngredients {\n      id\n     }\n   }\",\"variables\":{}}")
+  {:query "query { GetIngredients {\n      id\n     }\n   }"
+   :variables "{}"})
 
 (defn get-json-body [response]
   (parse-string (:body response)))
@@ -25,20 +26,24 @@
       (is (= 404 (:status response)))))
 
   (testing "graphql endpoint"
-    (let [response (app (request :post "/api" get-ingredients-payload))]
+    (let [response (app (json-body (request :post "/api") get-ingredients-payload))]
       (is (= ["data"] (keys (get-json-body response))))
       (is (= 200 (:status response))))))
 
-(defn migrate [test-case]
-  (mount/start
-    #'cbook.config/env
-    #'cbook.db.core/*db*)
-  (migrations/migrate ["reset"] (select-keys env [:database-url])))
-
-(defn clear [test-case]
+(defn reset-db! [test-case]
   (jdbc/with-db-transaction [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
     (test-case)))
 
-(use-fixtures :once migrate)
-(use-fixtures :each clear)
+(defn start-components [test-case]
+  (mount/start
+    #'cbook.config/env
+    #'cbook.db.core/*db*)
+  (mount/start
+    #'cbook.config/env
+    #'cbook.handler/app)
+  (migrations/migrate ["reset"] (select-keys env [:database-url]))
+  (test-case))
+
+(use-fixtures :once start-components)
+(use-fixtures :each start-components reset-db!)

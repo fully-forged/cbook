@@ -17,7 +17,7 @@
       (jdbc/db-set-rollback-only! t-conn)
       (test-case))))
 
-(deftest test-users
+(deftest test-ingredients
   (let [inserted (db/create-ingredient! {:name "Cinnamon"})
         cinnamon (db/get-ingredient inserted)]
     (is (= "Cinnamon" (:name cinnamon)))

@@ -7,18 +7,18 @@
             [mount.core :as mount]))
 
 (use-fixtures
-  :once
-  (fn [f]
+  :each
+  (fn [test-case]
     (mount/start
       #'cbook.config/env
       #'cbook.db.core/*db*)
     (migrations/migrate ["reset"] (select-keys env [:database-url]))
-    (f)))
+    (jdbc/with-db-transaction [t-conn *db*]
+      (jdbc/db-set-rollback-only! t-conn)
+      (test-case))))
 
 (deftest test-users
-  (jdbc/with-db-transaction [t-conn *db*]
-    (jdbc/db-set-rollback-only! t-conn)
-    (let [inserted (db/create-ingredient! {:name "Cinnamon"})
-          cinnamon (db/get-ingredient inserted)]
-      (is (= "Cinnamon" (:name cinnamon)))
-      (is (= [cinnamon] (db/get-ingredients))))))
+  (let [inserted (db/create-ingredient! {:name "Cinnamon"})
+        cinnamon (db/get-ingredient inserted)]
+    (is (= "Cinnamon" (:name cinnamon)))
+    (is (= [cinnamon] (db/get-ingredients)))))

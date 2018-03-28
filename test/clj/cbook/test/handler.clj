@@ -1,16 +1,24 @@
 (ns cbook.test.handler
-  (:require [clojure.test :refer :all]
+  (:require [cbook.db.core :refer [*db*] :as db]
+            [luminus-migrations.core :as migrations]
+            [clojure.test :refer :all]
+            [clojure.java.jdbc :as jdbc]
             [ring.mock.request :refer :all]
             [cbook.handler :refer :all]
             [cheshire.core :refer [parse-string]]
+            [cbook.config :refer [env]]
             [mount.core :as mount]))
 
 (use-fixtures
-  :once
-  (fn [f]
-    (mount/start #'cbook.config/env
-                 #'cbook.handler/app)
-    (f)))
+  :each
+  (fn [test-case]
+    (mount/start
+      #'cbook.config/env
+      #'cbook.db.core/*db*)
+    (migrations/migrate ["reset"] (select-keys env [:database-url]))
+    (jdbc/with-db-transaction [t-conn *db*]
+      (jdbc/db-set-rollback-only! t-conn)
+      (test-case))))
 
 (def get-ingredients-payload
   "{ GetIngredients {

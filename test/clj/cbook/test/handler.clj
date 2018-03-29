@@ -10,7 +10,7 @@
             [mount.core :as mount]))
 
 (def get-ingredients-payload
-  {:query "query { ingredient {\n      id\n     }\n   }"
+  {:query "query { ingredients {\n      id\n     }\n   }"
    :variables "{}"})
 
 (defn get-json-body [response]

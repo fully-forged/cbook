@@ -1,6 +1,10 @@
 (ns cbook.views
   (:require [re-frame.core :as rf]))
 
+(defn home-page []
+  [:div.container
+   [:h1 "Home"]])
+
 (def pages
   {:home #'home-page})
 
@@ -21,10 +25,6 @@
    [:div#collapsing-navbar.collapse.navbar-collapse
     [:ul.nav.navbar-nav.mr-auto
      [nav-link "#/" "Home" :home]]]])
-
-(defn home-page []
-  [:div.container
-   [:h1 "Home"]])
 
 (defn page []
   [:div

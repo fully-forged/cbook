@@ -8,9 +8,9 @@
 
 (deftest test-ingredients
   (let [inserted (db/create-ingredient! {:name "Cinnamon"})
-        cinnamon (db/get-ingredient inserted)]
+        cinnamon (db/get-ingredient {:id (:id inserted) :cols ["*"]})]
     (is (= "Cinnamon" (:name cinnamon)))
-    (is (= [cinnamon] (db/get-ingredients)))))
+    (is (= [cinnamon] (db/get-ingredients {:cols ["*"]})))))
 
 (defn reset-db! [test-case]
   (mount/start

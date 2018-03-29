@@ -71,6 +71,7 @@
                  :output-to "target/cljsbuild/public/js/app.js"
                  :source-map "target/cljsbuild/public/js/app.js.map"
                  :optimizations :advanced
+                 :closure-defines {goog.DEBUG false}
                  :pretty-print false
                  :closure-warnings
                  {:externs-validation :off :non-standard-jsdoc :off}
@@ -112,7 +113,8 @@
                       :source-map true
                       :optimizations :none
                       :pretty-print true
-                      :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
+                      :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true
+                                        goog.DEBUG true}
                       :preloads [day8.re-frame-10x.preload]}}}}
 
 
@@ -133,6 +135,7 @@
                      {:output-to "target/test.js"
                       :main "cbook.doo-runner"
                       :optimizations :whitespace
+                      :closure-defines {goog.DEBUG false}
                       :pretty-print true}}}}}
 
 

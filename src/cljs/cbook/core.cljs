@@ -2,7 +2,6 @@
   (:require [reagent.core :as r]
             [re-frame.core :as rf]
             [re-graph.core :as re-graph]
-            [venia.core :as v]
             [secretary.core :as secretary]
             [ajax.core :refer [GET POST]]
             [cbook.history :refer [hook-browser-navigation!]]
@@ -24,16 +23,9 @@
   {:ws-url nil
    :http-url "/api"})
 
-(def test-query
-  (v/graphql-query {:venia/queries [[:ingredients [:id :name]]]}))
-
 (defn init! []
   (rf/dispatch-sync [:initialize-db])
   (rf/dispatch [::re-graph/init re-graph-options])
-  (rf/dispatch [::re-graph/query
-                test-query
-                {}
-                [:got-ingredients]])
   (load-interceptors!)
   (hook-browser-navigation!)
   (mount-components))

@@ -1,6 +1,9 @@
 (ns cbook.views
   (:require [re-frame.core :as rf]))
 
+(def pages
+  {:home #'home-page})
+
 (defn nav-link [uri title page]
   [:li.nav-item
    {:class (when (= page @(rf/subscribe [:page])) "active")}
@@ -27,6 +30,3 @@
   [:div
    [navbar]
    [(pages @(rf/subscribe [:page]))]])
-
-(def pages
-  {:home #'home-page})

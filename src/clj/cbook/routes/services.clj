@@ -2,6 +2,7 @@
   (:require [com.walmartlabs.lacinia.util :refer [attach-resolvers]]
             [com.walmartlabs.lacinia.schema :as schema]
             [com.walmartlabs.lacinia :as lacinia]
+            [com.walmartlabs.lacinia.executor :as executor]
             [clojure.data.json :as json]
             [clojure.edn :as edn]
             [clojure.string :as str]
@@ -10,10 +11,12 @@
             [cbook.db.core :as db]))
 
 (defn get-ingredient [context args value]
-  (db/get-ingredient (select-keys args [:id])))
+  (let [cols (mapv name (executor/selections-seq context))]
+    (db/get-ingredient {:id (:id args) :cols cols})))
 
 (defn get-ingredients [context args value]
-  (db/get-ingredients))
+  (let [cols (mapv name (executor/selections-seq context))]
+    (db/get-ingredients {:cols cols})))
 
 (defn create-ingredient! [context args value]
   (db/create-ingredient! (select-keys args [:name])))

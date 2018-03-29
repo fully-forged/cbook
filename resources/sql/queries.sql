@@ -7,9 +7,9 @@ RETURNING id
 
 -- :name get-ingredient :? :1
 -- :doc retrieves an ingredient by its id
-SELECT * FROM ingredients
+SELECT :i*:cols FROM ingredients
 WHERE id = :id::uuid
 
 -- :name get-ingredients :? :*
 -- :doc retrieves all ingredients
-SELECT * FROM ingredients
+SELECT :i*:cols FROM ingredients

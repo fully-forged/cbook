@@ -1,20 +1,13 @@
 (ns cbook.views
-  (:require [re-frame.core :as rf]
-            [re-graph.core :as re-graph]
-            [cbook.queries :as q]))
+  (:require [re-frame.core :as rf]))
 
 (def >evt rf/dispatch)
 (def <sub (comp deref rf/subscribe))
-(defn >gqevt [query args cback]
-  (>evt [::re-graph/query
-         query
-         args
-         cback]))
 
 (defn refresh-button []
   [:div.navbar-item
    [:button.button
-     {:on-click (>gqevt q/refresh-ingredients {} [:got-ingredients])}
+     {:on-click #(>evt [:get-ingredients])}
      "Refresh"]])
 
 (defn ingredient-item [ingredient]

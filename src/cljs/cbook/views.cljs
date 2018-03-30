@@ -1,49 +1,62 @@
 (ns cbook.views
   (:require [re-frame.core :as rf]
             [re-graph.core :as re-graph]
-            [venia.core :as v]))
+            [cbook.queries :as q]))
 
 (def >evt rf/dispatch)
 (def <sub (comp deref rf/subscribe))
-
-(def test-query
-  (v/graphql-query {:venia/queries [[:ingredients [:id :name]]]}))
-
-(defn load-ingredients! []
+(defn >gqevt [query args cback]
   (>evt [::re-graph/query
-         test-query
-         {}
-         [:got-ingredients]]))
+         query
+         args
+         cback]))
 
-(defn load-button []
- [:input {:type "button" :value "load"
-          :on-click load-ingredients!}])
+(defn refresh-button []
+  [:div.navbar-item
+   [:button.button
+     {:on-click (>gqevt q/refresh-ingredients {} [:got-ingredients])}
+     "Refresh"]])
+
+(defn ingredient-item [ingredient]
+  ^{:key (:id ingredient)} [:tr
+                            [:td (:id ingredient)]
+                            [:td (:name ingredient)]
+                            [:td (:created_at ingredient)]
+                            [:td (:updated_at ingredient)]])
+
+(defn ingredients-list [ingredients]
+  [:table.table.is-striped.is-hoverable.is-fullwidth.is-bordered
+   [:thead
+    [:tr
+     [:th "ID"]
+     [:th "Name"]
+     [:th "Created at"]
+     [:th "Updated at"]]]
+   [:tbody
+     (map ingredient-item ingredients)]])
 
 (defn home-page []
   [:div.container
-   [:h1 "Home"]
-   [load-button]])
+   [:h1.title "Available ingredients"]
+   [ingredients-list (<sub [:ingredients])]
+   [:nav.navbar
+    [:div.navbar-menu
+      [:div.navbar-end
+       [refresh-button]]]]])
 
 (def pages
   {:home #'home-page})
 
 (defn nav-link [uri title page]
-  [:li.nav-item
-   {:class (when (= page (<sub [:page])) "active")}
-   [:a.nav-link {:href uri} title]])
+  [:a.navbar-item
+   {:class (when (= page (<sub [:page])) "active")
+    :href uri}
+   title])
 
 (defn navbar []
-  [:nav.navbar.navbar-dark.bg-primary.navbar-expand-md
-   {:role "navigation"}
-   [:button.navbar-toggler.hidden-sm-up
-    {:type "button"
-     :data-toggle "collapse"
-     :data-target "#collapsing-navbar"}
-    [:span.navbar-toggler-icon]]
-   [:a.navbar-brand {:href "#/"} "cbook"]
-   [:div#collapsing-navbar.collapse.navbar-collapse
-    [:ul.nav.navbar-nav.mr-auto
-     [nav-link "#/" "Home" :home]]]])
+  [:nav.navbar.is-primary {:role "navigation"}
+    [:div.navbar-brand
+      [nav-link "#/" "Home" :home]]])
 
 (defn page []
   [:div

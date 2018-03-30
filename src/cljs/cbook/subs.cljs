@@ -7,6 +7,6 @@
     (:page db)))
 
 (reg-sub
-  :docs
+  :ingredients
   (fn [db _]
-    (:docs db)))
+    (:ingredients db)))

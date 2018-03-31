@@ -23,6 +23,12 @@
   (fn [db [_ page]]
     (assoc db :page page)))
 
+(rf/reg-event-db
+  :update-new-ingredient-name
+  standard-interceptors
+  (fn [db [_ new-ingredient-name]]
+    (assoc db :new-ingredient-name new-ingredient-name)))
+
 (rf/reg-event-fx
   :get-ingredients
   standard-interceptors
@@ -37,3 +43,11 @@
     (if data
       (assoc db :ingredients (:ingredients data))
       db)))
+
+(rf/reg-event-fx
+  :create-ingredient
+  standard-interceptors
+  (fn [cofx _]
+    (println (get-in cofx [:db :new-ingredient-name]))
+    {:db (:db cofx)
+     :dispatch []}))

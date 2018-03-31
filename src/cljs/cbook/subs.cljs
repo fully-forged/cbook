@@ -10,3 +10,8 @@
   :ingredients
   (fn [db _]
     (:ingredients db)))
+
+(reg-sub
+  :new-ingredient-name
+  (fn [db _]
+    (:new-ingredient-name db)))

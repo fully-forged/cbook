@@ -28,6 +28,14 @@
    [:tbody
      (map ingredient-item ingredients)]])
 
+(defn create-bar [new-ingredient-name]
+  [:nav.navbar
+    [:input {:type "text"
+             :value new-ingredient-name
+             :on-change #(>evt [:update-new-ingredient-name (-> % .-target .-value)])}]
+    [:button.button {:on-click #(>evt [:create-ingredient])}
+                    "Save!"]])
+
 (defn home-page []
   [:div.container
    [:h1.title "Available ingredients"]
@@ -35,6 +43,7 @@
    [:nav.navbar
     [:div.navbar-menu
       [:div.navbar-end
+       [create-bar (<sub [:new-ingredient-name])]
        [refresh-button]]]]])
 
 (def pages

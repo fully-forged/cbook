@@ -4,12 +4,6 @@
 (def >evt rf/dispatch)
 (def <sub (comp deref rf/subscribe))
 
-(defn refresh-button []
-  [:div.navbar-item
-   [:button.button
-     {:on-click #(>evt [:get-ingredients])}
-     "Refresh"]])
-
 (defn ingredient-item [ingredient]
   ^{:key (:id ingredient)} [:tr
                             [:td (:id ingredient)]
@@ -29,22 +23,34 @@
      (map ingredient-item ingredients)]])
 
 (defn create-bar [new-ingredient-name]
-  [:nav.navbar
-    [:input {:type "text"
-             :value new-ingredient-name
-             :on-change #(>evt [:update-new-ingredient-name (-> % .-target .-value)])}]
-    [:button.button {:on-click #(>evt [:create-ingredient])}
-                    "Save!"]])
+  (let [submit-hander (fn [event]
+                        (>evt [:create-ingredient])
+                        (.preventDefault event))]
+    [:form
+      {:on-submit submit-hander}
+      [:div.field.is-horizontal
+        [:div.field-label.is-normal
+          [:label.label "Add new"]]
+        [:div.field-body
+          [:div.field
+            [:div.control
+              [:input.input {:type "text"
+                             :value new-ingredient-name
+                             :placeholder "e.g. Cumin"
+                             :on-change #(>evt [:update-new-ingredient-name (-> % .-target .-value)])}]]]]]
+      [:div.field.is-horizontal
+        [:div.field-label]
+        [:div.field-body
+          [:div.field
+            [:div.control
+              [:a.button.is-info {:on-click #(>evt [:create-ingredient])}
+                                 "Save"]]]]]]))
 
 (defn home-page []
   [:div.container
    [:h1.title "Available ingredients"]
    [ingredients-list (<sub [:ingredients])]
-   [:nav.navbar
-    [:div.navbar-menu
-      [:div.navbar-end
-       [create-bar (<sub [:new-ingredient-name])]
-       [refresh-button]]]]])
+   [create-bar (<sub [:new-ingredient-name])]])
 
 (def pages
   {:home #'home-page})

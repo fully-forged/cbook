@@ -11,6 +11,9 @@
 (def refresh-ingredients-evt
   [::re-graph/query q/refresh-ingredients {} [:got-ingredients]])
 
+(defn create-ingredient-evt [name]
+  [::re-graph/mutate q/create-ingredient {:name name} [:created-ingredient]])
+
 (rf/reg-event-db
   :initialize-db
   standard-interceptors
@@ -48,6 +51,16 @@
   :create-ingredient
   standard-interceptors
   (fn [cofx _]
-    (println (get-in cofx [:db :new-ingredient-name]))
-    {:db (:db cofx)
-     :dispatch []}))
+    (let [db (:db cofx)
+          new-ingredient-name (:new-ingredient-name db)]
+      {:db (assoc db :new-ingredient-name "")
+       :dispatch (create-ingredient-evt new-ingredient-name)})))
+
+(rf/reg-event-db
+  :created-ingredient
+  standard-interceptors
+  (fn [db [_ {:keys [data errors] :as payload}]]
+    (if data
+      (let [created-ingredient (:CreateIngredient data)]
+        (update db :ingredients #(conj % created-ingredient)))
+      db)))

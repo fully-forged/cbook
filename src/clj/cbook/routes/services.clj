@@ -30,15 +30,21 @@
                          :create-ingredient! create-ingredient!})
       schema/compile))
 
+(defn unwrap-vars
+  [query]
+  (:variables (json/read-str query :key-fn keyword)))
+
 (defn variable-map
   "Reads the `variables` query parameter, which contains a JSON string
   for any and all GraphQL variables to be associated with this request.
   Returns a map of the variables (using keyword keys)."
-  [request]
-  (let [vars (get-in request [:query-params :variables])]
-    (if-not (str/blank? vars)
-      (json/read-str vars :key-fn keyword)
-      {})))
+  [raw-query request-method query-params]
+  (case request-method
+    :get (let [vars (:variables query-params)]
+           (if-not (str/blank? vars)
+             (json/read-str vars :key-fn keyword)
+             {}))
+    :post (unwrap-vars raw-query)))
 
 (defn unwrap-query
   [query content-type]
@@ -59,10 +65,9 @@
   [compiled-schema]
   (let [context {:cache (atom {})}]
     (fn [request]
-      (let [vars (variable-map request)
-            query (-> request
-                      (extract-query)
-                      (unwrap-query (:content-type request)))
+      (let [raw-query (extract-query request)
+            query (unwrap-query raw-query (:content-type request))
+            vars (variable-map raw-query (:request-method request) (:query-params request))
             result (lacinia/execute compiled-schema query vars context)
             status (if (-> result :errors seq)
                      400

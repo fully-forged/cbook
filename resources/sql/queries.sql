@@ -3,7 +3,7 @@
 INSERT INTO ingredients
 (name, created_at, updated_at)
 VALUES (:name, now(), now())
-RETURNING id
+RETURNING *
 
 -- :name get-ingredient :? :1
 -- :doc retrieves an ingredient by its id

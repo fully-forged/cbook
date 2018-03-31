@@ -11,6 +11,6 @@
 (def create-ingredient
   "CreateIngredient($name: String!) {
     CreateIngredient(name: $name) {
-      id
+      id, name, created_at, updated_at
     }
   }")

@@ -32,7 +32,6 @@
                  [ring/ring-defaults "0.3.1"]
                  [secretary "1.2.3"]
                  [re-graph "0.1.4"]
-                 [vincit/venia "0.2.5"]
                  [selmer "1.11.7"]]
 
   :min-lein-version "2.0.0"

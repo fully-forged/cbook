@@ -13,7 +13,8 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (rf/dispatch [:set-active-page :home]))
+  (rf/dispatch [:set-active-page :home])
+  (rf/dispatch [:get-ingredients]))
 
 (defn mount-components []
   (rf/clear-subscription-cache!)

@@ -1,6 +1,16 @@
 (ns cbook.queries
-  (:require [re-graph.core :as re-graph]
-            [venia.core :as v]))
+  (:require [re-graph.core :as re-graph]))
 
 (def refresh-ingredients
-  (v/graphql-query {:venia/queries [[:ingredients [:id :name :created_at :updated_at]]]}))
+  "{
+    ingredients {
+      id, name, created_at, updated_at
+    }
+  }")
+
+(def create-ingredient
+  "CreateIngredient($name: String!) {
+    CreateIngredient(name: $name) {
+      id
+    }
+  }")

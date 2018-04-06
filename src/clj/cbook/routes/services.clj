@@ -8,26 +8,15 @@
             [clojure.string :as str]
             [ring.util.http-response :refer :all]
             [compojure.api.sweet :refer :all]
-            [cbook.db.core :as db]))
-
-(defn get-ingredient [context args value]
-  (let [cols (mapv name (executor/selections-seq context))]
-    (db/get-ingredient {:id (:id args) :cols cols})))
-
-(defn get-ingredients [context args value]
-  (let [cols (mapv name (executor/selections-seq context))]
-    (db/get-ingredients {:cols cols})))
-
-(defn create-ingredient! [context args value]
-  (db/create-ingredient! (select-keys args [:name])))
+            [cbook.resolver :as resolver]))
 
 (def compiled-schema
   (-> "resources/graphql/schema.edn"
       slurp
       edn/read-string
-      (attach-resolvers {:get-ingredient get-ingredient
-                         :get-ingredients get-ingredients
-                         :create-ingredient! create-ingredient!})
+      (attach-resolvers {:get-ingredient resolver/get-ingredient
+                         :get-ingredients resolver/get-ingredients
+                         :create-ingredient! resolver/create-ingredient!})
       schema/compile))
 
 (defn unwrap-vars

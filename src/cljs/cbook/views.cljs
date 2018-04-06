@@ -7,18 +7,14 @@
 (defn ingredient-item [ingredient]
   ^{:key (:id ingredient)} [:tr
                             [:td (:id ingredient)]
-                            [:td (:name ingredient)]
-                            [:td (:created_at ingredient)]
-                            [:td (:updated_at ingredient)]])
+                            [:td (:name ingredient)]])
 
 (defn ingredients-list [ingredients]
   [:table.table.is-striped.is-hoverable.is-fullwidth.is-bordered
    [:thead
     [:tr
      [:th "ID"]
-     [:th "Name"]
-     [:th "Created at"]
-     [:th "Updated at"]]]
+     [:th "Name"]]]
    [:tbody
      (map ingredient-item ingredients)]])
 

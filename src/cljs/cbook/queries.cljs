@@ -4,7 +4,7 @@
 (def refresh-ingredients
   "{
     ingredients {
-      id, name, created_at, updated_at
+      id, name
     }
   }")
 
